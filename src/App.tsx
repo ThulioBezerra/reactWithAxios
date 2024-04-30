@@ -1,45 +1,33 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import './App.css'
 import axios from 'axios';
 
-interface Advice{
-  id: number;
-  advice: string;
-}
 
 function App() {
 
-  const [nome, setNome] = useState<String>();
-  const [advice, setAdvice] = useState<String>();
+  const [character, setCharacter] = useState<any>();
 
-  const getData = useCallback( async()=> {
-    await axios.get('https://api.adviceslip.com/advice')
-    .then(function (response) {
-     console.log(response.data);
-     setAdvice(response.data.slip.advice);
-    })
-    .catch(function (error) {
-      console.error(error);
-    })
+  const getCharacterName = useCallback(async (id: number) => {
+    const character = await axios.get(`https://swapi.py4e.com/api/people/${id}`)
+    setCharacter(character.data)
   }, [])
-
-  useEffect(()=>{
-    getData();
-  }, [])
-
-  const defName = (nome: string) => {
-    setNome(nome);
-  }
 
   return (
-    <div>
-      <strong>Ola {nome}</strong>
+    <div className='main-container'>
+      <h1>STAR WARS </h1>
 
-      <strong>{advice}</strong>
-      <button onClick={() => defName('Tomate')}>Tomate</button>
-      <button onClick={() => defName('Batata')}>Batata</button>
-      <button onClick={() => defName('Beterraba')}>Beterraba</button>
+      <strong>Nome do personagem: {character ? character.name : ""}</strong>
+      <strong>Cor de pele: {character ? character.hair_color : ""}</strong>
+      <strong>Altura: {character ? character.height : ""}</strong>
+      <strong>Gender: {character ? character.gender : ""}</strong>
 
+      <div>
+        <button onClick={() => getCharacterName(14)}>han solo</button>
+        <button onClick={() => getCharacterName(13)}>chewbacca</button>
+        <button onClick={() => getCharacterName(1)}>Luke</button>
+      </div>
+
+      <p>Feito por: Thulio Bezerra, Júlio César, Arthur Ian</p>
     </div>
   )
 }
